@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intervalle Generator</title>
+  <style>
+    body {
+      font-family:monospace;
+      text-align: center;
+      padding: 20px;
+      font-size: 1.3vw;
+    }
+    .cont {
+      display: flex;
+      justify-content: center;
+
+    }
+    .keyboard {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      height: 200px;
+      width: 25vw;
+      margin-top: 30px;
+    }
+    .key {
+      width: 50px;
+      height: 200px;
+      margin: 0 2px;
+      background: white;
+      border: 1px solid black;
+      position: relative;
+      z-index: 1;
+      cursor: pointer;
+    }
+    .key.black {
+      width: 30px;
+      height: 120px;
+      background: black;
+      border: 1px solid black;
+      /* position: absolute;
+      top:0; */
+      z-index: 2;
+    }
+    .blk {
+        width: 92%;
+        position: absolute;
+        display: flex;
+        justify-content: space-evenly;
+    }
+    /* .key[data-note="C#"] {
+      left: 35px;
+    }
+    .key[data-note="D#"] {
+      left: 85px;
+    }
+    .key[data-note="F#"] {
+      left: 185px;
+    }
+    .key[data-note="G#"] {
+      left: 235px;
+    }
+    .key[data-note="A#"] {
+      left: 285px;
+    } */ 
+  </style>
+</head>
+<body onload="generateInterval()">
+  <!-- <h1>Intervalle Generator</h1> -->
+  <p id="prompt"></p>
+  <!-- <div>
+    <fieldset>
+    <input type="radio" name="chiffres" id="chf">
+    <label for="chf">chiffres</label>
+    <input type="radio" name="lettres" id="ltr">
+    <label for="ltr">lettres</label>
+</fieldset>
+</div> -->
+  <div class="cont">
+    <div class="keyboard" id="keyboard">
+        <!-- White keys -->
+        <div class="key" data-note="C"></div>
+        <div class="key" data-note="D"></div>
+        <div class="key" data-note="E"></div>
+        <div class="key" data-note="F"></div>
+        <div class="key" data-note="G"></div>
+        <div class="key" data-note="A"></div>
+        <div class="key" data-note="B"></div>
+
+        <!-- Black keys -->
+        <div class="blk">
+            <div class="key black" data-note="C#"></div>
+            <div class="key black" data-note="D#"></div>
+            <div class="key black" data-note="D#" style="visibility: hidden;"></div>
+            <div class="key black" data-note="F#"></div>
+            <div class="key black" data-note="G#"></div>
+            <div class="key black" data-note="A#"></div>
+        </div>
+        
+    </div>
+    <div class="keyboard" id="keyboard">
+        <!-- White keys -->
+        <div class="key" data-note="C"></div>
+        <div class="key" data-note="D"></div>
+        <div class="key" data-note="E"></div>
+        <div class="key" data-note="F"></div>
+        <div class="key" data-note="G"></div>
+        <div class="key" data-note="A"></div>
+        <div class="key" data-note="B"></div>
+
+        <!-- Black keys -->
+        <div class="blk">
+            <div class="key black" data-note="C#"></div>
+            <div class="key black" data-note="D#"></div>
+            <div class="key black" data-note="D#" style="visibility: hidden;"></div>
+            <div class="key black" data-note="F#"></div>
+            <div class="key black" data-note="G#"></div>
+            <div class="key black" data-note="A#"></div>
+        </div>
+        
+    </div>
+</div>
+
+  <script>
+    const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    const notesb = ["Db", "Eb", "Gb", "Ab", "Bb"];
+
+    const intervals = {
+      "1": 0,
+      "b2": 1,
+      "2": 2,
+      "#2": 3,
+      "b3": 3,
+      "3": 4,
+      "4": 5,
+      "#4": 6,
+      "b5": 6,
+      "5": 7,
+      "#5": 8,
+      "b6": 8,
+      "6": 9,
+      "bb7": 9,
+      "b7": 10,
+      "7": 11,
+      "8": 12,
+      "b9": 13,
+      "9": 14,
+      "#9": 15,
+      "11": 17,
+      "#11": 18,
+      "b13": 20,
+      "13": 21
+    };
+
+    let currentNote;
+    let currentInterval;
+
+    function generateInterval() {
+      const rootIndex = Math.floor(Math.random() * [].concat(notes, notesb).length);
+      const intervalKeys = Object.keys(intervals);
+      const intervalIndex = Math.floor(Math.random() * intervalKeys.length);
+
+      currentNote = [].concat(notes, notesb)[rootIndex];
+      currentInterval = intervalKeys[intervalIndex];
+      
+
+      document.getElementById("prompt").innerText = `Note fondamentale : ${currentNote}, Intervalle : ${currentInterval}`;
+      if (currentNote.endsWith('b')) {
+        if (currentNote === "Db") {
+            currentNote = "C#";
+        } else if (currentNote === "Eb") {
+            currentNote = "D#"
+        } else if (currentNote === "Gb") {
+            currentNote = "F#"
+        } else if (currentNote === "Ab") {
+            currentNote = "G#"
+        } else if (currentNote === "Bb") {
+            currentNote = "A#"
+        }
+      }
+    }
+
+    document.querySelectorAll(".key").forEach(key => {
+      key.addEventListener("click", () => {
+        const clickedNote = key.getAttribute("data-note");
+        const rootIndex = notes.indexOf(currentNote);
+        const targetIndex = (rootIndex + intervals[currentInterval]) % notes.length;
+
+        if (clickedNote === notes[targetIndex]) {
+          document.getElementById("prompt").style.color = " #449e53";
+          setTimeout(function() {
+            document.getElementById("prompt").style.color = "#000000"
+            generateInterval()
+          }, 700)
+        } else {
+          document.getElementById("prompt").style.color = "#ff3344";
+
+          setTimeout(()=> {
+            document.getElementById("prompt").style.color = "#000000"
+          }, 700)
+          
+        }
+      });
+    });
+  </script>
+</body>
+</html>
